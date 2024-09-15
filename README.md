@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Code Overview</title>
-</head>
-<body>
-
+    
 <h1>Code Overview</h1>
 
 <p>This repository contains code for data preprocessing, feature engineering, and building a machine learning model to predict car prices. The project involves cleaning and transforming data, extracting features, and using LightGBM with hyperparameter optimization to build a predictive model.</p>
