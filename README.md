@@ -15,8 +15,6 @@
     <li><a href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
     <li><a href="#model-evaluation">Model Evaluation</a></li>
     <li><a href="#predictions">Predictions</a></li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#dependencies">Dependencies</a></li>
 </ul>
 
 <h2 id="data-acquisition">Data Acquisition</h2>
