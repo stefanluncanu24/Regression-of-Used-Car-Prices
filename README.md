@@ -134,7 +134,7 @@ df['transm_'].fillna('Unknown', inplace=True)
 </code></pre>
 
 <h3>Color Standardization</h3>
-
+This idea is inspired by the following Kaggle notebook: [Regression of Used Car Price](https://www.kaggle.com/code/danishyousuf19/regression-of-used-car-prices/notebook).
 <ul>
     <li><strong>Standardization</strong>: Standardizes interior (<code>int_col</code>) and exterior (<code>ext_col</code>) color columns.</li>
     <li><strong>Base Color Extraction</strong>: Extracts base colors from color descriptions using predefined dictionaries.</li>
