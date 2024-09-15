@@ -325,27 +325,5 @@ output = pd.DataFrame({'id': test.index, 'price': preds_test_lgbm})
 output.to_csv('submission.csv', index=False)
 </code></pre>
 
-<h2 id="usage">Usage</h2>
-
-<p>To run the code:</p>
-
-<ol>
-    <li><strong>Install Dependencies</strong>: Ensure all dependencies are installed.</li>
-    <li><strong>Data Placement</strong>: Place <code>train.csv</code> and <code>test.csv</code> in the working directory.</li>
-    <li><strong>Execute Script</strong>: Run the script to perform data preprocessing, model training, and prediction generation.</li>
-</ol>
-
-<h2 id="dependencies">Dependencies</h2>
-
-<ul>
-    <li><strong>Python 3.x</strong></li>
-    <li><strong>Pandas</strong></li>
-    <li><strong>NumPy</strong></li>
-    <li><strong>LightGBM</strong></li>
-    <li><strong>scikit-learn</strong></li>
-    <li><strong>Hyperopt</strong></li>
-    <li><strong>Regular Expressions (<code>re</code> module)</strong></li>
-</ul>
-
 </body>
 </html>
