@@ -6,6 +6,8 @@
 
 <p>This repository contains a comprehensive solution for the <strong>Kaggle Playground Series - Season 4, Episode 9</strong> competition, focusing on predicting car prices using machine learning techniques. The project involves extensive data acquisition, preprocessing, feature engineering, and building a predictive model with LightGBM, leveraging hyperparameter optimization to achieve optimal performance.</p>
 
+![image](https://github.com/user-attachments/assets/f55f273d-19ed-410d-a135-40a988926481)
+
 <h2>Table of Contents</h2>
 <ul>
     <li><a href="#data-acquisition">Data Acquisition</a></li>
