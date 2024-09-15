@@ -3,7 +3,7 @@
     
 <h1>Code Overview</h1>
 
-<p>This repository contains code for data preprocessing, feature engineering, and building a machine learning model to predict car prices. The project involves cleaning and transforming data, extracting features, and using LightGBM with hyperparameter optimization to build a predictive model.</p>
+<p>This repository contains a comprehensive solution for the Kaggle Playground Series - Season 4, Episode 9 competition, focusing on predicting car prices using machine learning techniques. The project involves extensive data preprocessing, feature engineering, and building a predictive model with LightGBM, leveraging hyperparameter optimization to achieve optimal performance.</p>
 
 <h2>Table of Contents</h2>
 <ul>
