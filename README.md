@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
-    
+<head>
+    <title>Code Overview</title>
+</head>
+<body>
+
 <h1>Code Overview</h1>
 
-<p>This repository contains a comprehensive solution for the Kaggle Playground Series - Season 4, Episode 9 competition, focusing on predicting car prices using machine learning techniques. The project involves extensive data preprocessing, feature engineering, and building a predictive model with LightGBM, leveraging hyperparameter optimization to achieve optimal performance.</p>
-
-![image](https://github.com/user-attachments/assets/13c78da7-88e8-4779-86ad-0692920c966b)
+<p>This repository contains a comprehensive solution for the <strong>Kaggle Playground Series - Season 4, Episode 9</strong> competition, focusing on predicting car prices using machine learning techniques. The project involves extensive data acquisition, preprocessing, feature engineering, and building a predictive model with LightGBM, leveraging hyperparameter optimization to achieve optimal performance.</p>
 
 <h2>Table of Contents</h2>
 <ul>
+    <li><a href="#data-acquisition">Data Acquisition</a></li>
     <li><a href="#data-preprocessing">Data Preprocessing</a></li>
     <li><a href="#feature-engineering">Feature Engineering</a></li>
     <li><a href="#model-building">Model Building</a></li>
@@ -19,16 +22,43 @@
     <li><a href="#dependencies">Dependencies</a></li>
 </ul>
 
+<h2 id="data-acquisition">Data Acquisition</h2>
+
+<p>The dataset is downloaded directly from Kaggle using the Kaggle API. Ensure that you have your <code>kaggle.json</code> file properly configured in your system.</p>
+
+<pre><code class="language-python">import kaggle
+import zipfile
+import os
+
+# Ensure the kaggle.json file is in the correct location
+os.environ['KAGGLE_CONFIG_DIR'] = "~/.kaggle/"
+
+# Command to download the dataset
+competition = 'playground-series-s4e9'
+kaggle.api.competition_download_files(competition, path='.', quiet=False)
+
+# Unzip the downloaded file
+zip_file = f'{competition}.zip'
+with zipfile.ZipFile(zip_file, 'r') as z:
+    z.extractall('.')
+    print(f'Extracted all files in {zip_file}')
+
+# Clean up the zip file if desired
+os.remove(zip_file)
+</code></pre>
+
 <h2 id="data-preprocessing">Data Preprocessing</h2>
 
 <h3>Loading and Merging Data</h3>
 
 <ul>
-    <li><strong>Loading Data</strong>: The training and test datasets are loaded from <code>train.csv</code> and <code>test.csv</code>.</li>
+    <li><strong>Loading Data</strong>: The training and test datasets are loaded from <code>train.csv</code> and <code>test.csv</code> after extraction.</li>
     <li><strong>Merging Data</strong>: Both datasets are concatenated into a single DataFrame <code>dataset</code> for uniform preprocessing.</li>
 </ul>
 
-<pre><code class="language-python">train = pd.read_csv('train.csv')
+<pre><code class="language-python">import pandas as pd
+
+train = pd.read_csv('train.csv')
 test = pd.read_csv('test.csv')
 dataset = pd.concat([train, test], axis=0).reset_index(drop=True)
 </code></pre>
@@ -57,7 +87,10 @@ dataset = pd.concat([train, test], axis=0).reset_index(drop=True)
     <li><strong>Column Dropping</strong>: Removes unnecessary columns like <code>model_year</code>, <code>engine</code>, and <code>id</code>.</li>
 </ul>
 
-<pre><code class="language-python">def clean_data(df):
+<pre><code class="language-python">import numpy as np
+import re
+
+def clean_data(df):
     # Car Age Calculation
     df.insert(4, "CarAge", 2024 - df["model_year"])
     df = df.drop(columns=['model_year'])
@@ -136,7 +169,8 @@ df['transm_'].fillna('Unknown', inplace=True)
 </code></pre>
 
 <h3>Color Standardization</h3>
-This idea is inspired from the following Kaggle notebook: https://www.kaggle.com/code/danishyousuf19/regression-of-used-car-prices/notebook
+
+<p>This idea is inspired by the following Kaggle notebook: <a href="https://www.kaggle.com/code/danishyousuf19/regression-of-used-car-prices/notebook" target="_blank">Regression of Used Car Prices</a>.</p>
 
 <ul>
     <li><strong>Standardization</strong>: Standardizes interior (<code>int_col</code>) and exterior (<code>ext_col</code>) color columns.</li>
@@ -210,14 +244,16 @@ df = extract_other_features(df)
     <li><strong>Validation Set</strong>: Further splits the training data into training and validation sets.</li>
 </ul>
 
-<pre><code class="language-python">train = df[df['price'].notnull()]
+<pre><code class="language-python">from sklearn.model_selection import train_test_split
+
+train = df[df['price'].notnull()]
 test = df[df['price'].isnull()]
 
 X = train.drop(columns=['price'])
 y = train['price']
 
 # Split into Training and Validation Sets
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=rs)
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 </code></pre>
 
 <h3>Preprocessing for Modeling</h3>
@@ -228,7 +264,11 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_st
     <li><strong>Pipeline Creation</strong>: Defines a pipeline to streamline preprocessing and model training.</li>
 </ul>
 
-<pre><code class="language-python">categorical_cols = X_train.select_dtypes(include=['object', 'category']).columns.tolist()
+<pre><code class="language-python">from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+
+categorical_cols = X_train.select_dtypes(include=['object', 'category']).columns.tolist()
 numerical_cols = X_train.select_dtypes(include=['int64', 'float64']).columns.tolist()
 
 preprocessor = ColumnTransformer(
@@ -254,7 +294,14 @@ def create_pipeline(model):
     <li><strong>Optimization Execution</strong>: Runs the optimization for a specified number of evaluations to find the best hyperparameters.</li>
 </ul>
 
-<pre><code class="language-python">lgbm_space = {
+<pre><code class="language-python">import lightgbm as lgb
+from hyperopt import fmin, tpe, hp, Trials, STATUS_OK
+from hyperopt.pyll import scope
+
+# Set random state for reproducibility
+rs = 42
+
+lgbm_space = {
     'num_boost_round': scope.int(hp.quniform('num_boost_round', 100, 2500, 1)),
     'num_leaves': scope.int(hp.quniform('num_leaves', 20, 600, 1)),
     'learning_rate': hp.loguniform('learning_rate', -9.21, -1.01),
@@ -290,7 +337,10 @@ best_lgbm_params, trials_lgbm = optimize(lgbm_space, 'lgbm', max_evals=50)
     <li><strong>Performance Assessment</strong>: Prints the RMSE to assess model performance.</li>
 </ul>
 
-<pre><code class="language-python">best_lgbm = lgb.LGBMRegressor(
+<pre><code class="language-python">from sklearn.metrics import mean_squared_error
+import numpy as np
+
+best_lgbm = lgb.LGBMRegressor(
     num_leaves=int(best_lgbm_params['num_leaves']),
     learning_rate=best_lgbm_params['learning_rate'],
     feature_fraction=best_lgbm_params['feature_fraction'],
@@ -325,5 +375,30 @@ output = pd.DataFrame({'id': test.index, 'price': preds_test_lgbm})
 output.to_csv('submission.csv', index=False)
 </code></pre>
 
+<h2 id="usage">Usage</h2>
+
+<p>To run the code:</p>
+
+<ol>
+    <li><strong>Install Dependencies</strong>: Ensure all dependencies are installed.</li>
+    <li><strong>Configure Kaggle API</strong>: Place your <code>kaggle.json</code> file in the appropriate directory (e.g., <code>~/.kaggle/</code>).</li>
+    <li><strong>Data Download</strong>: Run the data acquisition code to download and extract the dataset from Kaggle.</li>
+    <li><strong>Execute Script</strong>: Run the script to perform data preprocessing, model training, and prediction generation.</li>
+</ol>
+
+<h2 id="dependencies">Dependencies</h2>
+
+<ul>
+    <li><strong>Python 3.x</strong></li>
+    <li><strong>Pandas</strong></li>
+    <li><strong>NumPy</strong></li>
+    <li><strong>LightGBM</strong></li>
+    <li><strong>scikit-learn</strong></li>
+    <li><strong>Hyperopt</strong></li>
+    <li><strong>Kaggle API</strong></li>
+    <li><strong>Regular Expressions (<code>re</code> module)</strong></li>
+</ul>
+
 </body>
 </html>
+
